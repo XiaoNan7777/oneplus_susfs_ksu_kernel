@@ -47,15 +47,16 @@ jobs:
           repo --trace sync -c -j$(nproc) --no-tags --fail-fast
 
       - name: Make build script executable
+        working-directory: kernel_workspace
         run: |
-          chmod +x ../build_mksu.sh
+         chmod +x ./build_mksu.sh
 
       - name: Build
         working-directory: kernel_workspace
         id: build
         run: |
-          ../build_mksu.sh ${{ github.event.inputs.manifest_file }}
-
+         ./build_mksu.sh ${{ github.event.inputs.manifest_file }}
+    
       - name: Upload artifacts
         uses: actions/upload-artifact@main
         with:
