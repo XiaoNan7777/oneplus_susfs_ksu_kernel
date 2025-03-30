@@ -3,32 +3,30 @@ name: OnePlus Kernel Build
 on:
   workflow_dispatch:
     inputs:
-      manifest_files:
-        description: '选择内核清单（多个值用逗号分隔）'
+      manifest_file:
+        description: '选择设备型号 (Select the device model)'
         required: true
-        type: string
-        default: 'oneplus12_v'
+        type: choice
+        options:
+          - oneplus12_v
+          - oneplus_13r
+          - oneplus_ace3_pro
+          - oneplus_ace3_pro_v
+          - oneplus_ace5
+          - oneplus_pad2_v
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        manifest_file: ${{ split(github.event.inputs.manifest_files, ',') }}
-      fail-fast: false
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@main
+      - uses: actions/checkout@main
 
-      - name: Free disk space
-        uses: jlumbroso/free-disk-space@main
+      - uses: jlumbroso/free-disk-space@main
         with:
           tool-cache: true
 
-      - name: Set up Python
-        uses: actions/setup-python@main
+      - uses: actions/setup-python@main
         with:
           python-version: "3.x"
 
@@ -38,24 +36,25 @@ jobs:
           sudo apt-get install repo
           mkdir kernel_workspace
 
-      - name: Initialize and sync repo
+      - name: Initialize repo and sync
         working-directory: kernel_workspace
         run: |
           repo init \
             -u https://github.com/OnePlusOSS/kernel_manifest.git \
             -b refs/heads/oneplus/sm8650 \
-            -m ${{ matrix.manifest_file }}.xml \
+            -m ${{ github.event.inputs.manifest_file }}.xml \
             --depth=1 --repo-rev=v2.16
           repo --trace sync -c -j$(nproc) --no-tags --fail-fast
 
-      - name: Build kernel
+      - name: Build
         working-directory: kernel_workspace
+        id: build
         run: |
           ../build_mksu.sh
 
       - name: Upload artifacts
         uses: actions/upload-artifact@main
         with:
-          name: "Kernel-${{ matrix.manifest_file }}"
+          name: "AnyKernel3-${{ github.event.inputs.manifest_file }}-${{ steps.build.outputs.kernel_version }}-MKSU-${{ steps.build.outputs.ksu_version }}-SUSFS-${{ steps.build.outputs.susfs_version }}"
           path: kernel_workspace/AnyKernel3
           compression-level: 9
