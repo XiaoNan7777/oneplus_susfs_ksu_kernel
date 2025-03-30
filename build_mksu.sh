@@ -1,5 +1,5 @@
-#!/bin/bash
-set -e
+#!/usr/bin/env bash
+set -xve
 
 # 获取 GitHub Actions 传入的 manifest_file 参数
 MANIFEST_FILE=$1
