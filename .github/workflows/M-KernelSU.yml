@@ -50,7 +50,7 @@ jobs:
         working-directory: kernel_workspace
         id: build
         run: |
-         ./build_mksu.sh
+          ../build_mksu.sh
     
       - name: Upload artifacts
         uses: actions/upload-artifact@main
