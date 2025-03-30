@@ -46,8 +46,7 @@ jobs:
             --depth=1 --repo-rev=v2.16
           repo --trace sync -c -j$(nproc) --no-tags --fail-fast
 
-      - name: Make build script executable
-        run: chmod +x ../build_mksu.sh
+      
 
       - name: Build
         working-directory: kernel_workspace
