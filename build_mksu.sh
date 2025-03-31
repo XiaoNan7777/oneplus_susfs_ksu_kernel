@@ -39,30 +39,19 @@ if ! command -v $CC &> /dev/null; then
 fi
 
 # 根据参数设置优化标志
-KCFLAGS=""
-KCPPFLAGS=""
 BAZEL_ARGS=""
 
 if [ "$ENABLE_O3" = "true" ]; then
-  KCFLAGS="$KCFLAGS -O3"
-  KCPPFLAGS="$KCPPFLAGS -O3"
-  BAZEL_ARGS="$BAZEL_ARGS --extra-cflags=-O3"
+  BAZEL_ARGS="$BAZEL_ARGS --copt=-O3 --copt=-Wno-error"
 fi
 
 if [ "$ENABLE_LTO" = "true" ]; then
-  KCFLAGS="$KCFLAGS -flto=thin"
-  KCPPFLAGS="$KCPPFLAGS -flto=thin"
-  BAZEL_ARGS="$BAZEL_ARGS --lto=thin"
+  BAZEL_ARGS="$BAZEL_ARGS --copt=-flto=thin --linkopt=-flto=thin"
 fi
 
 if [ "$ENABLE_POLLY" = "true" ]; then
-  KCFLAGS="$KCFLAGS -floop-optimize"
-  KCPPFLAGS="$KCPPFLAGS -floop-optimize"
-  BAZEL_ARGS="$BAZEL_ARGS --polly"
+  BAZEL_ARGS="$BAZEL_ARGS --copt=-floop-optimize --features=polly"
 fi
-
-export KCFLAGS
-export KCPPFLAGS
 
 # 显示编译器版本（用于调试）
 $CC --version
@@ -106,7 +95,14 @@ patch -p1 -F 3 < 69_hide_stuff.patch
 
 # 构建内核
 cd "$OLD_DIR"
-./kernel_platform/build_with_bazel.py -t ${CPUD} gki -- $BAZEL_ARGS --extra-ldflags="-fuse-ld=lld"
+./kernel_platform/build_with_bazel.py -t ${CPUD} gki -- \
+  --config=stamp \
+  --linkopt="-fuse-ld=lld" \
+  $BAZEL_ARGS \
+  --skip_abi \
+  --skip_abl \
+  --ignore_missing_projects \
+  --user_kmi_symbol_lists=//msm-kernel:android/abi_gki_aarch64_qcom
 
 # 获取内核版本
 KERNEL_VERSION=$(cat $KERNEL_WORKSPACE/out/msm-kernel-${CPUD}-gki/dist/version.txt 2>/dev/null || echo "6.1")
