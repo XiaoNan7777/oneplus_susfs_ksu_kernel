@@ -32,12 +32,6 @@ export CC="clang"
 export CLANG_TRIPLE="aarch64-linux-gnu-"
 export LDFLAGS="-fuse-ld=lld"
 
-# 检查 clang 是否可用
-if ! command -v $CC &> /dev/null; then
-    echo "Error: clang is not installed or not found in PATH"
-    exit 1
-fi
-
 # 根据参数设置优化标志
 BAZEL_ARGS=""
 
@@ -50,11 +44,10 @@ if [ "$ENABLE_LTO" = "true" ]; then
 fi
 
 if [ "$ENABLE_POLLY" = "true" ]; then
-  # 使用 -mllvm -polly 启用 Polly，而不是 -floop-optimize
   BAZEL_ARGS="$BAZEL_ARGS --copt=-mllvm --copt=-polly"
 fi
 
-# 显示编译器版本（用于调试）
+# 显示编译器版本
 $CC --version
 
 # 清理旧的保护导出文件
