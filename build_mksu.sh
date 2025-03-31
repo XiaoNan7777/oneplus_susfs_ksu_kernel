@@ -95,14 +95,7 @@ patch -p1 -F 3 < 69_hide_stuff.patch
 
 # 构建内核
 cd "$OLD_DIR"
-./kernel_platform/build_with_bazel.py -t ${CPUD} gki \
-  --skip_abi \
-  --skip_abl \
-  --ignore_missing_projects \
-  --user_kmi_symbol_lists=msm-kernel:android/abi_gki_aarch64_qcom \
-  --config=stamp \
-  --linkopt="-fuse-ld=lld" \
-  $BAZEL_ARGS
+./kernel_platform/build_with_bazel.py -t pineapple gki --config=stamp --linkopt="-fuse-ld=lld" --copt=-O3 --copt=-Wno-error --copt=-flto=thin --linkopt=-flto=thin --copt=-floop-optimize --features=polly
 
 # 获取内核版本
 KERNEL_VERSION=$(cat $KERNEL_WORKSPACE/out/msm-kernel-${CPUD}-gki/dist/version.txt 2>/dev/null || echo "6.1")
