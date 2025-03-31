@@ -26,6 +26,10 @@ on:
         description: '启用 O3 优化'
         type: boolean
         default: false
+      enable_extra_flags:
+        description: '针对 ARMv8-A 架构优化'
+        type: boolean
+        default: false
 
 jobs:
   build:
