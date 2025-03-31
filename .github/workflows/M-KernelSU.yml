@@ -15,7 +15,7 @@ on:
           - oneplus_ace5
           - oneplus_pad2_v
       enable_lto:
-        description: '启用 LTO'
+        description: '启用 Full LTO'
         type: boolean
         default: false
       enable_polly:
