@@ -50,7 +50,8 @@ if [ "$ENABLE_LTO" = "true" ]; then
 fi
 
 if [ "$ENABLE_POLLY" = "true" ]; then
-  BAZEL_ARGS="$BAZEL_ARGS --copt=-floop-optimize --features=polly"
+  # 使用 -mllvm -polly 启用 Polly，而不是 -floop-optimize
+  BAZEL_ARGS="$BAZEL_ARGS --copt=-mllvm --copt=-polly"
 fi
 
 # 显示编译器版本（用于调试）
@@ -95,7 +96,10 @@ patch -p1 -F 3 < 69_hide_stuff.patch
 
 # 构建内核
 cd "$OLD_DIR"
-./kernel_platform/build_with_bazel.py -t pineapple gki --config=stamp --linkopt="-fuse-ld=lld" --copt=-O3 --copt=-Wno-error --copt=-flto=thin --linkopt=-flto=thin --copt=-floop-optimize --features=polly
+./kernel_platform/build_with_bazel.py -t ${CPUD} gki \
+  --config=stamp \
+  --linkopt="-fuse-ld=lld" \
+  $BAZEL_ARGS
 
 # 获取内核版本
 KERNEL_VERSION=$(cat $KERNEL_WORKSPACE/out/msm-kernel-${CPUD}-gki/dist/version.txt 2>/dev/null || echo "6.1")
