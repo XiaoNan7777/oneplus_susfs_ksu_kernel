@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       manifest_file:
-        description: '选择设备型号 (Select the device model)'
+        description: '选择设备型号'
         required: true
         type: choice
         options:
@@ -42,10 +42,10 @@ jobs:
         with:
           python-version: "3.x"
 
-      - name: Install repo tool
+      - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install repo
+          sudo apt-get install -y repo clang lld git curl patch
           mkdir kernel_workspace
 
       - name: Initialize repo and sync
