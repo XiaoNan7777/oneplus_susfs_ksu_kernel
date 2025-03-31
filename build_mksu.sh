@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -xve
 
-# 获取 GitHub Actions 传入的 manifest_file 参数
+# 获取 GitHub Actions 传入的参数
 MANIFEST_FILE=$1
 ENABLE_LTO=$2
 ENABLE_POLLY=$3
@@ -31,6 +31,12 @@ KERNEL_WORKSPACE="$OLD_DIR/kernel_platform"
 export CC="clang"
 export CLANG_TRIPLE="aarch64-linux-gnu-"
 export LDFLAGS="-fuse-ld=lld"
+
+# 检查 clang 是否可用
+if ! command -v $CC &> /dev/null; then
+    echo "Error: clang is not installed or not found in PATH"
+    exit 1
+fi
 
 # 根据参数设置优化标志
 KCFLAGS=""
