@@ -26,10 +26,6 @@ on:
         description: '启用 O3 优化'
         type: boolean
         default: false
-      enable_extra_flags:
-        description: '针对 ARMv8-A 架构优化'
-        type: boolean
-        default: false
 
 jobs:
   build:
@@ -76,8 +72,7 @@ jobs:
          ./build_mksu.sh ${{ github.event.inputs.manifest_file }} \
                          ${{ github.event.inputs.enable_lto }} \
                          ${{ github.event.inputs.enable_polly }} \
-                         ${{ github.event.inputs.enable_o3 }} \
-                         ${{ github.event.inputs.enable_extra_flags }}
+                         ${{ github.event.inputs.enable_o3 }} 
 
       - name: Upload artifacts
         uses: actions/upload-artifact@main
