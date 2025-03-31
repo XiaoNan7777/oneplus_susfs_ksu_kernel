@@ -58,7 +58,7 @@ patch -p1 --forward < fix.patch || true
 patch -p1 --forward < vfs_fix.patch || true
 cd ../common
 patch -p1 < 50_add_susfs_in_gki-${ANDROID_VERSION}-${KERNEL_VERSION}.patch || true
-cp ../../kernel_patches/69_hide_stuff.patch ./
+cp ../../kernel_patches4mksu/69_hide_stuff.patch ./
 patch -p1 -F 3 < 69_hide_stuff.patch
 
 # 构建内核
