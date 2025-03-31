@@ -89,7 +89,17 @@ cd "$OLD_DIR"
 ./kernel_platform/build_with_bazel.py -t ${CPUD} gki \
   --config=stamp \
   --linkopt="-fuse-ld=lld" \
-  $BAZEL_ARGS
+  $BAZEL_ARGS &
+
+BUILD_PID=$!
+
+# 等待 Image 生成
+while [ ! -f "$KERNEL_WORKSPACE/out/msm-kernel-${CPUD}-gki/dist/Image" ]; do
+  sleep 1
+done
+
+# Image 生成后终止构建
+kill -TERM $BUILD_PID 2>/dev/null || true
 
 # 获取内核版本
 KERNEL_VERSION=$(cat $KERNEL_WORKSPACE/out/msm-kernel-${CPUD}-gki/dist/version.txt 2>/dev/null || echo "6.1")
