@@ -73,10 +73,6 @@ git clone https://github.com/Kernel-SU/AnyKernel3 --depth=1
 rm -rf ./AnyKernel3/.git
 cp $KERNEL_WORKSPACE/out/msm-kernel-${CPUD}-gki/dist/Image ./AnyKernel3/
 
-ZIPNAME="Anykernel3-MKSU-SUSFS-${KSU_VERSION}-OnePlus_ACE_3_Pro.zip"
-cd ./AnyKernel3
-zip -r "../$ZIPNAME" ./*
-
 # 输出变量到 GitHub Actions
 echo "kernel_version=$KERNEL_VERSION" >> $GITHUB_OUTPUT
 echo "ksu_version=$KSU_VERSION" >> $GITHUB_OUTPUT
