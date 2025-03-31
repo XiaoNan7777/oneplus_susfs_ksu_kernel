@@ -6,7 +6,6 @@ MANIFEST_FILE=$1
 ENABLE_LTO=$2
 ENABLE_POLLY=$3
 ENABLE_O3=$4
-ENABLE_EXTRA_FLAGS=$5
 
 # 根据 manifest_file 映射 CPUD
 case $MANIFEST_FILE in
@@ -29,9 +28,9 @@ OLD_DIR=$(pwd)
 KERNEL_WORKSPACE="$OLD_DIR/kernel_platform"
 
 # 检查和设置编译器环境
-export CC=clang-19
-export LD=lld-19
-export CLANG_TRIPLE=aarch64-linux-gnu-
+export CC="clang"
+export CLANG_TRIPLE="aarch64-linux-gnu-"
+export LDFLAGS="-fuse-ld=lld"
 
 # 根据参数设置优化标志
 BAZEL_ARGS=""
@@ -46,10 +45,6 @@ fi
 
 if [ "$ENABLE_POLLY" = "true" ]; then
   BAZEL_ARGS="$BAZEL_ARGS --copt=-mllvm --copt=-polly --copt=-mllvm --copt=-polly-vectorizer=stripmine"
-fi
-
-if [ "$ENABLE_EXTRA_FLAGS" = "true" ]; then
-  BAZEL_ARGS="$BAZEL_ARGS --copt=-march=armv8.6-a --copt=-mcpu=cortex-a720+crc+crypto --copt=-ffast-math --copt=-Rpass=.* --copt=-fomit-frame-pointer"
 fi
 
 # 清理旧的保护导出文件
