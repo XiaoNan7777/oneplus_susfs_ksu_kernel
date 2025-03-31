@@ -92,7 +92,6 @@ cd "$OLD_DIR"
   $BAZEL_ARGS 
 
 # Apply new hook and add configuration
-        run: |
           cd kernel_workspace/kernel_platform
           echo "CONFIG_KSU=y" >> ./common/arch/arm64/configs/gki_defconfig
           echo "CONFIG_KSU_WITH_KPROBES=n" >> ./common/arch/arm64/configs/gki_defconfig
