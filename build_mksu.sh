@@ -29,9 +29,9 @@ OLD_DIR=$(pwd)
 KERNEL_WORKSPACE="$OLD_DIR/kernel_platform"
 
 # 检查和设置编译器环境
-export CC="clang"
-export CLANG_TRIPLE="aarch64-linux-gnu-"
-export LDFLAGS="-fuse-ld=lld"
+export CC=clang-19
+export LD=lld-19
+export CLANG_TRIPLE=aarch64-linux-gnu-
 
 # 根据参数设置优化标志
 BAZEL_ARGS=""
@@ -49,7 +49,7 @@ if [ "$ENABLE_POLLY" = "true" ]; then
 fi
 
 if [ "$ENABLE_EXTRA_FLAGS" = "true" ]; then
-  BAZEL_ARGS="$BAZEL_ARGS --copt=-march=armv8.6-a+crc+crypto --copt=-ffast-math --copt=-Rpass=.* --copt=-fomit-frame-pointer"
+  BAZEL_ARGS="$BAZEL_ARGS --copt=-march=armv8.6-a --copt=-mcpu=cortex-a720+crc+crypto --copt=-ffast-math --copt=-Rpass=.* --copt=-fomit-frame-pointer"
 fi
 
 # 清理旧的保护导出文件
