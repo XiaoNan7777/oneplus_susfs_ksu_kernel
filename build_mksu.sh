@@ -3,6 +3,9 @@ set -xve
 
 # 获取 GitHub Actions 传入的 manifest_file 参数
 MANIFEST_FILE=$1
+ENABLE_LTO=$2
+ENABLE_POLLY=$3
+ENABLE_O3=$4
 
 # 根据 manifest_file 映射 CPUD
 case $MANIFEST_FILE in
@@ -23,6 +26,40 @@ SUSFS_VERSION="1.5.5"
 # 设置工作目录
 OLD_DIR=$(pwd)
 KERNEL_WORKSPACE="$OLD_DIR/kernel_platform"
+
+# 检查和设置编译器环境
+export CC="clang"
+export CLANG_TRIPLE="aarch64-linux-gnu-"
+export LDFLAGS="-fuse-ld=lld"
+
+# 根据参数设置优化标志
+KCFLAGS=""
+KCPPFLAGS=""
+BAZEL_ARGS=""
+
+if [ "$ENABLE_O3" = "true" ]; then
+  KCFLAGS="$KCFLAGS -O3"
+  KCPPFLAGS="$KCPPFLAGS -O3"
+  BAZEL_ARGS="$BAZEL_ARGS --extra-cflags=-O3"
+fi
+
+if [ "$ENABLE_LTO" = "true" ]; then
+  KCFLAGS="$KCFLAGS -flto=thin"
+  KCPPFLAGS="$KCPPFLAGS -flto=thin"
+  BAZEL_ARGS="$BAZEL_ARGS --lto=thin"
+fi
+
+if [ "$ENABLE_POLLY" = "true" ]; then
+  KCFLAGS="$KCFLAGS -floop-optimize"
+  KCPPFLAGS="$KCPPFLAGS -floop-optimize"
+  BAZEL_ARGS="$BAZEL_ARGS --polly"
+fi
+
+export KCFLAGS
+export KCPPFLAGS
+
+# 显示编译器版本（用于调试）
+$CC --version
 
 # 清理旧的保护导出文件
 rm -f $KERNEL_WORKSPACE/common/android/abi_gki_protected_exports_* || echo "No protected exports!"
@@ -63,7 +100,7 @@ patch -p1 -F 3 < 69_hide_stuff.patch
 
 # 构建内核
 cd "$OLD_DIR"
-./kernel_platform/build_with_bazel.py -t ${CPUD} gki
+./kernel_platform/build_with_bazel.py -t ${CPUD} gki -- $BAZEL_ARGS --extra-ldflags="-fuse-ld=lld"
 
 # 获取内核版本
 KERNEL_VERSION=$(cat $KERNEL_WORKSPACE/out/msm-kernel-${CPUD}-gki/dist/version.txt 2>/dev/null || echo "6.1")
