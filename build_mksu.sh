@@ -86,7 +86,6 @@ patch -p1 -F 3 < 69_hide_stuff.patch
 cp ../../kernel_patches4mksu/hooks/new_hooks.patch ./
 patch -p1 -F 3 < new_hooks.patch
 
-cd kernel_workspace/kernel_platform
           echo "CONFIG_KSU=y" >> ./common/arch/arm64/configs/gki_defconfig
           echo "CONFIG_KSU_WITH_KPROBES=n" >> ./common/arch/arm64/configs/gki_defconfig
           echo "CONFIG_KSU_SUSFS=y" >> ./common/arch/arm64/configs/gki_defconfig
