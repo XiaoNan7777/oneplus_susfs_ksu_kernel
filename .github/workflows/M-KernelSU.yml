@@ -8,12 +8,12 @@ on:
         required: true
         type: choice
         options:
-          - oneplus12_v # OnePlus 12
-          - oneplus_13r # OnePlus 13R
-          - oneplus_ace3_pro # OnePlus Ace3 Pro
-          - oneplus_ace3_pro_v # OnePlus Ace3v
-          - oneplus_ace5 # OnePlus Ace5
-          - oneplus_pad2_v # OnePlus Pad Pro
+          - OnePlus 12
+          - OnePlus 13R
+          - OnePlus Ace3 Pro
+          - OnePlus Ace3v
+          - OnePlus Ace5
+          - OnePlus Pad Pro
       enable_lto:
         description: '启用 Full LTO'
         type: boolean
@@ -53,13 +53,26 @@ jobs:
          sudo apt-get install -y clang-19 lld-19 llvm-19
          mkdir kernel_workspace
 
+      - name: Map friendly name to manifest file
+        id: map_manifest
+        run: |
+          case "${{ github.event.inputs.manifest_file }}" in
+            "OnePlus 12") manifest="oneplus12_v" ;;
+            "OnePlus 13R") manifest="oneplus_13r" ;;
+            "OnePlus Ace3 Pro") manifest="oneplus_ace3_pro" ;;
+            "OnePlus Ace3v") manifest="oneplus_ace3_pro_v" ;;
+            "OnePlus Ace5") manifest="oneplus_ace5" ;;
+            "OnePlus Pad Pro") manifest="oneplus_pad2_v" ;;
+          esac
+          echo "mapped_manifest=$manifest" >> $GITHUB_OUTPUT
+
       - name: Initialize repo and sync
         working-directory: kernel_workspace
         run: |
           repo init \
             -u https://github.com/OnePlusOSS/kernel_manifest.git \
             -b refs/heads/oneplus/sm8650 \
-            -m ${{ github.event.inputs.manifest_file }}.xml \
+            -m ${{ steps.map_manifest.outputs.mapped_manifest }}.xml \
             --depth=1 --repo-rev=v2.16
           repo --trace sync -c -j$(nproc) --no-tags --fail-fast
 
@@ -69,7 +82,7 @@ jobs:
         run: | 
          curl -Ls https://raw.githubusercontent.com/XiaoNan7777/oneplus_susfs_ksu_kernel/main/build_mksu.sh -o build_mksu.sh
          chmod +x build_mksu.sh
-         ./build_mksu.sh ${{ github.event.inputs.manifest_file }} \
+         ./build_mksu.sh ${{ steps.map_manifest.outputs.mapped_manifest }} \
                          ${{ github.event.inputs.enable_lto }} \
                          ${{ github.event.inputs.enable_polly }} \
                          ${{ github.event.inputs.enable_o3 }} 
@@ -77,6 +90,6 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@main
         with:
-          name: "AnyKernel3-${{ github.event.inputs.manifest_file }}-${{ steps.build.outputs.kernel_version }}-MKSU-${{ steps.build.outputs.ksu_version }}-SUSFS-${{ steps.build.outputs.susfs_version }}"
+          name: "AnyKernel3-${{ steps.map_manifest.outputs.mapped_manifest }}-${{ steps.build.outputs.kernel_version }}-MKSU-${{ steps.build.outputs.ksu_version }}-SUSFS-${{ steps.build.outputs.susfs_version }}"
           path: kernel_workspace/AnyKernel3
           compression-level: 9
