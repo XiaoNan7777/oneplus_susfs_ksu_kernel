@@ -8,12 +8,12 @@ on:
         required: true
         type: choice
         options:
-          - oneplus12_v
-          - oneplus_13r
-          - oneplus_ace3_pro
-          - oneplus_ace3_pro_v
-          - oneplus_ace5
-          - oneplus_pad2_v
+          - oneplus12_v # OnePlus 12
+          - oneplus_13r # OnePlus 13R
+          - oneplus_ace3_pro # OnePlus Ace3 Pro
+          - oneplus_ace3_pro_v # OnePlus Ace3v
+          - oneplus_ace5 # OnePlus Ace5
+          - oneplus_pad2_v # OnePlus Pad Pro
       enable_lto:
         description: '启用 Full LTO'
         type: boolean
