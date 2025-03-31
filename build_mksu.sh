@@ -83,6 +83,10 @@ cd ../common
 patch -p1 < 50_add_susfs_in_gki-${ANDROID_VERSION}-${KERNEL_VERSION}.patch || true
 cp ../../kernel_patches4mksu/69_hide_stuff.patch ./
 patch -p1 -F 3 < 69_hide_stuff.patch
+curl -o 001-lz4.patch https://raw.githubusercontent.com/ferstar/kernel_manifest/realme/sm8650/patches/001-lz4.patch
+patch -p1 < 001-lz4.patch
+curl -o 002-zstd.patch https://raw.githubusercontent.com/ferstar/kernel_manifest/realme/sm8650/patches/002-zstd.patch
+patch -p1 < 002-zstd.patch
 
 # 构建内核
 cd "$OLD_DIR"
