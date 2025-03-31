@@ -6,6 +6,7 @@ MANIFEST_FILE=$1
 ENABLE_LTO=$2
 ENABLE_POLLY=$3
 ENABLE_O3=$4
+ENABLE_PGO=$5
 
 # 根据 manifest_file 映射 CPUD
 case $MANIFEST_FILE in
@@ -45,6 +46,10 @@ fi
 
 if [ "$ENABLE_POLLY" = "true" ]; then
   BAZEL_ARGS="$BAZEL_ARGS --copt=-mllvm --copt=-polly"
+fi
+
+if [ "$ENABLE_PGO" = "true" ]; then
+  BAZEL_ARGS="$BAZEL_ARGS --copt=-fprofile-generate --linkopt=-fprofile-generate"
 fi
 
 # 显示编译器版本
