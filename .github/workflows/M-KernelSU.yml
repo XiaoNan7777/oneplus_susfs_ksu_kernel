@@ -76,7 +76,8 @@ jobs:
          ./build_mksu.sh ${{ github.event.inputs.manifest_file }} \
                          ${{ github.event.inputs.enable_lto }} \
                          ${{ github.event.inputs.enable_polly }} \
-                         ${{ github.event.inputs.enable_o3 }}
+                         ${{ github.event.inputs.enable_o3 }} \
+                         ${{ github.event.inputs.enable_extra_flags }}
 
       - name: Upload artifacts
         uses: actions/upload-artifact@main
