@@ -83,7 +83,6 @@ cd ../common
 patch -p1 < 50_add_susfs_in_gki-${ANDROID_VERSION}-${KERNEL_VERSION}.patch || true
 cp ../../kernel_patches4mksu/69_hide_stuff.patch ./
 patch -p1 -F 3 < 69_hide_stuff.patch
-cd kernel_workspace/kernel_platform/common
 cp ../../kernel_patches4mksu/hooks/new_hooks.patch ./
 patch -p1 -F 3 < new_hooks.patch
 
