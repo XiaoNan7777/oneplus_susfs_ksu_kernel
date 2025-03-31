@@ -6,6 +6,7 @@ MANIFEST_FILE=$1
 ENABLE_LTO=$2
 ENABLE_POLLY=$3
 ENABLE_O3=$4
+ENABLE_EXTRA_FLAGS=$5
 
 # 根据 manifest_file 映射 CPUD
 case $MANIFEST_FILE in
@@ -45,6 +46,10 @@ fi
 
 if [ "$ENABLE_POLLY" = "true" ]; then
   BAZEL_ARGS="$BAZEL_ARGS --copt=-mllvm --copt=-polly --copt=-mllvm --copt=-polly-vectorizer=stripmine"
+fi
+
+if [ "$ENABLE_EXTRA_FLAGS" = "true" ]; then
+  BAZEL_ARGS="$BAZEL_ARGS --copt=-march=armv8.6-a+crc+crypto --copt=-ffast-math --copt=-Rpass=.* --copt=-fomit-frame-pointer"
 fi
 
 # 显示编译器版本
