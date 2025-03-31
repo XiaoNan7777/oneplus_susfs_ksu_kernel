@@ -41,7 +41,7 @@ if [ "$ENABLE_O3" = "true" ]; then
 fi
 
 if [ "$ENABLE_LTO" = "true" ]; then
-  BAZEL_ARGS="$BAZEL_ARGS --copt=-flto=thin --linkopt=-flto=thin"
+  BAZEL_ARGS="$BAZEL_ARGS --copt=-flto --linkopt=-flto"
 fi
 
 if [ "$ENABLE_POLLY" = "true" ]; then
