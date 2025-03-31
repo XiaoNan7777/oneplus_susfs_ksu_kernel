@@ -14,6 +14,18 @@ on:
           - oneplus_ace3_pro_v
           - oneplus_ace5
           - oneplus_pad2_v
+      enable_lto:
+        description: '启用 LTO'
+        type: boolean
+        default: false
+      enable_polly:
+        description: '启用 Polly'
+        type: boolean
+        default: false
+      enable_o3:
+        description: '启用 O3 优化'
+        type: boolean
+        default: false
 
 jobs:
   build:
