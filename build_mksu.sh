@@ -52,9 +52,6 @@ if [ "$ENABLE_EXTRA_FLAGS" = "true" ]; then
   BAZEL_ARGS="$BAZEL_ARGS --copt=-march=armv8.6-a+crc+crypto --copt=-ffast-math --copt=-Rpass=.* --copt=-fomit-frame-pointer"
 fi
 
-# 显示编译器版本
-$CC --version
-
 # 清理旧的保护导出文件
 rm -f $KERNEL_WORKSPACE/common/android/abi_gki_protected_exports_* || echo "No protected exports!"
 rm -f $KERNEL_WORKSPACE/msm-kernel/android/abi_gki_protected_exports_* || echo "No protected exports!"
