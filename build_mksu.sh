@@ -78,6 +78,7 @@ patch -p1 < 001-lz4.patch || true
 curl -o 002-zstd.patch https://raw.githubusercontent.com/ferstar/kernel_manifest/realme/sm8650/patches/002-zstd.patch
 patch -p1 < 002-zstd.patch || true
 
+cd "$KERNEL_WORKSPACE" || exit 1
 rm common/android/abi_gki_protected_exports_*         
 
 # 集成 oplus_bsp_sched_ext
