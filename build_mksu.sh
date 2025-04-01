@@ -27,7 +27,7 @@ SUSFS_VERSION="1.5.5"
 OLD_DIR="$(pwd)"
 KERNEL_WORKSPACE="$OLD_DIR/kernel_platform"
 
-# 配置编译器环境
+# 配置编译器自然环境
 export CC="clang"
 export CLANG_TRIPLE="aarch64-linux-gnu-"
 export LDFLAGS="-fuse-ld=lld"
@@ -71,7 +71,7 @@ patch -p1 --forward < mksu_susfs.patch || true
 patch -p1 --forward < fix.patch || true
 patch -p1 --forward < vfs_fix.patch || true
 cd ../common || exit 1
-patch -p1 < 50_add_susfs_in_gki-${ANDROID_VERSION}-${KERNEL_VERSION}.patch || true
+patch -s -p1 < 50_add_susfs_in_gki-${ANDROID_VERSION}-${KERNEL_VERSION}.patch || true
 
 curl -o 001-lz4.patch https://raw.githubusercontent.com/ferstar/kernel_manifest/realme/sm8650/patches/001-lz4.patch
 patch -p1 < 001-lz4.patch || true
@@ -79,6 +79,32 @@ curl -o 002-zstd.patch https://raw.githubusercontent.com/ferstar/kernel_manifest
 patch -p1 < 002-zstd.patch || true
 
 rm common/android/abi_gki_protected_exports_*         
+
+# 集成 oplus_bsp_sched_ext
+cd "$OLD_DIR" || exit 1
+rm -rf android_kernel_modules_and_devicetree_oneplus_sm8650  
+git clone https://github.com/OnePlusOSS/android_kernel_modules_and_devicetree_oneplus_sm8650.git -b oneplus/sm8650_v_15.0.0_oneplus_ace5 --depth 1
+cd "$KERNEL_WORKSPACE" || exit 1
+mkdir -p common/drivers/soc/oplus/sched_ext
+cp -r "$OLD_DIR/android_kernel_modules_and_devicetree_oneplus_sm8650/vendor/oplus/kernel/cpu/sched_ext/"* common/drivers/soc/oplus/sched_ext/
+
+cat << EOF >> common/drivers/soc/oplus/Kconfig
+config OPLUS_BSP_SCHED_EXT
+    bool "Oplus BSP Scheduler Extension"
+    default y
+    help
+      Enable Oplus scheduler extension for performance optimization.
+EOF
+
+cat << EOF > common/drivers/soc/oplus/sched_ext/Makefile
+obj-\$(CONFIG_OPLUS_BSP_SCHED_EXT) += oplus_bsp_sched_ext.o
+oplus_bsp_sched_ext-y := main.o
+EOF
+
+sed -i '/source "drivers\/soc\/oplus\/Kconfig"/a source "drivers/soc/oplus/sched_ext/Kconfig"' common/drivers/Kconfig
+sed -i '/obj-y\s\++= oplus\//a obj-$(CONFIG_OPLUS_BSP_SCHED_EXT) += oplus/sched_ext/' common/drivers/Makefile
+
+echo "CONFIG_OPLUS_BSP_SCHED_EXT=y" >> "$KERNEL_WORKSPACE/msm-kernel-${CPUD}-gki.config"
 
 # 构建内核
 cd "$OLD_DIR" || exit 1
