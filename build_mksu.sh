@@ -100,6 +100,8 @@ cd "$KERNEL_WORKSPACE" || exit 1
           echo "CONFIG_KSU_SUSFS_OPEN_REDIRECT=y" >> ./common/arch/arm64/configs/gki_defconfig
           echo "CONFIG_KSU_SUSFS_SUS_SU=n" >> ./common/arch/arm64/configs/gki_defconfig
           sed -i '2s/check_defconfig//' ./common/build.config.gki
+          
+rm common/android/abi_gki_protected_exports_*         
 
 # 构建内核
 cd "$OLD_DIR" || exit 1
