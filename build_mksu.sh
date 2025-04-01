@@ -61,7 +61,6 @@ cp ../kernel_patches4mksu/mksu/mksu_susfs.patch ./KernelSU/
 cp ../kernel_patches4mksu/mksu/fix.patch ./KernelSU/
 cp ../kernel_patches4mksu/mksu/vfs_fix.patch ./KernelSU/
 cp ../susfs4ksu/kernel_patches/50_add_susfs_in_gki-${ANDROID_VERSION}-${KERNEL_VERSION}.patch ./common/
-cp ../kernel_patches4mksu/69_hide_stuff.patch ./common/
 cp ../kernel_patches4mksu/hooks/new_hooks.patch ./common/
 cp -r ../susfs4ksu/kernel_patches/fs/* ./common/fs/
 cp -r ../susfs4ksu/kernel_patches/include/linux/* ./common/include/linux/
@@ -74,7 +73,6 @@ patch -p1 --forward < fix.patch || true
 patch -p1 --forward < vfs_fix.patch || true
 cd ../common || exit 1
 patch -p1 < 50_add_susfs_in_gki-${ANDROID_VERSION}-${KERNEL_VERSION}.patch || true
-patch -p1 -F 3 < 69_hide_stuff.patch || true
 patch -p1 -F 3 < new_hooks.patch || true
 
 curl -o 001-lz4.patch https://raw.githubusercontent.com/ferstar/kernel_manifest/realme/sm8650/patches/001-lz4.patch
