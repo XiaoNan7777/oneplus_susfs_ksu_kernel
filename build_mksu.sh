@@ -81,8 +81,7 @@ patch -p1 < 002-zstd.patch || true
 cd "$KERNEL_WORKSPACE" || exit 1
 rm common/android/abi_gki_protected_exports_*         
 
-echo "CONFIG_OPLUS_FEATURE_BSP_DRV_INJECT_TEST=y" >> "$KERNEL_WORKSPACE/msm-kernel-${CPUD}-gki.config"
-
+export OPLUS_FEATURES="OPLUS_FEATURE_BSP_DRV_INJECT_TEST=1"
 # 构建内核
 cd "$OLD_DIR" || exit 1
 ./kernel_platform/build_with_bazel.py -t "${CPUD}" gki \
