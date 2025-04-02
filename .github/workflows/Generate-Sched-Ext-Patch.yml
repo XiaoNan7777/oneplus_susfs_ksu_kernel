@@ -73,8 +73,12 @@ jobs:
           curl -O https://raw.githubusercontent.com/OnePlusOSS/android_kernel_modules_and_devicetree_oneplus_sm8650/oneplus/sm8650_v_15.0.0_oneplus_ace5/vendor/oplus/kernel/cpu/sched_ext/BUILD.bazel
           curl -O https://raw.githubusercontent.com/OnePlusOSS/android_kernel_modules_and_devicetree_oneplus_sm8650/oneplus/sm8650_v_15.0.0_oneplus_ace5/vendor/oplus/kernel/cpu/sched_ext/oplus_local_modules.bzl
 
+          # 验证文件是否存在
+          ls -la
+
           # 返回到 kernel_platform 目录并生成补丁
           cd ../..
+          git status  # 检查 Git 状态
           git add common/kernel/cpu/sched_ext/*
           git diff --cached > sched_ext.patch
 
