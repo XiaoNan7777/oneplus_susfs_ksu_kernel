@@ -91,5 +91,7 @@ jobs:
         uses: actions/upload-artifact@main
         with:
           name: "AnyKernel3-${{ steps.map_manifest.outputs.mapped_manifest }}-${{ steps.build.outputs.kernel_version }}-MKSU-${{ steps.build.outputs.ksu_version }}-SUSFS-${{ steps.build.outputs.susfs_version }}"
-          path: kernel_workspace/AnyKernel3
-          compression-level: 9
+          path: |
+              kernel_workspace/AnyKernel3
+              kernel_directory_structure.txt
+              compression-level: 9
