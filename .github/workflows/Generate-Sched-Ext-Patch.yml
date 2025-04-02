@@ -1,0 +1,89 @@
+name: Generate Sched Ext Patch
+
+on:
+  workflow_dispatch:
+    inputs:
+      manifest_file:
+        description: '选择设备型号'
+        required: true
+        type: choice
+        options:
+          - OnePlus 12
+          - OnePlus 13R
+          - OnePlus Ace3 Pro
+          - OnePlus Ace3v
+          - OnePlus Ace5
+          - OnePlus Pad Pro
+
+jobs:
+  generate-patch:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@main
+
+      - uses: jlumbroso/free-disk-space@main
+        with:
+          tool-cache: true
+
+      - uses: actions/setup-python@main
+        with:
+          python-version: "3.x"
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y repo git curl patch
+
+      - name: Map friendly name to manifest file
+        id: map_manifest
+        run: |
+          case "${{ github.event.inputs.manifest_file }}" in
+            "OnePlus 12") manifest="oneplus12_v" ;;
+            "OnePlus 13R") manifest="oneplus_13r" ;;
+            "OnePlus Ace3 Pro") manifest="oneplus_ace3_pro" ;;
+            "OnePlus Ace3v") manifest="oneplus_ace3_pro_v" ;;
+            "OnePlus Ace5") manifest="oneplus_ace5" ;;
+            "OnePlus Pad Pro") manifest="oneplus_pad2_v" ;;
+          esac
+          echo "mapped_manifest=$manifest" >> $GITHUB_OUTPUT
+
+      - name: Initialize repo and sync
+        working-directory: .
+        run: |
+          mkdir kernel_workspace
+          cd kernel_workspace
+          repo init \
+            -u https://github.com/OnePlusOSS/kernel_manifest.git \
+            -b refs/heads/oneplus/sm8650 \
+            -m ${{ steps.map_manifest.outputs.mapped_manifest }}.xml \
+            --depth=1 --repo-rev=v2.16
+          repo --trace sync -c -j$(nproc) --no-tags --fail-fast
+
+      - name: Generate sched_ext patch
+        working-directory: kernel_workspace/kernel_platform
+        run: |
+          # 创建目标目录
+          mkdir -p common/kernel/cpu/sched_ext
+          cd common/kernel/cpu/sched_ext
+
+          # 下载 sched_ext 文件
+          curl -O https://raw.githubusercontent.com/OnePlusOSS/android_kernel_modules_and_devicetree_oneplus_sm8650/oneplus/sm8650_v_15.0.0_oneplus_ace5/vendor/oplus/kernel/cpu/sched_ext/main.c
+          curl -O https://raw.githubusercontent.com/OnePlusOSS/android_kernel_modules_and_devicetree_oneplus_sm8650/oneplus/sm8650_v_15.0.0_oneplus_ace5/vendor/oplus/kernel/cpu/sched_ext/hmbird_sched_proc.h
+          curl -O https://raw.githubusercontent.com/OnePlusOSS/android_kernel_modules_and_devicetree_oneplus_sm8650/oneplus/sm8650_v_15.0.0_oneplus_ace5/vendor/oplus/kernel/cpu/sched_ext/BUILD.bazel
+          curl -O https://raw.githubusercontent.com/OnePlusOSS/android_kernel_modules_and_devicetree_oneplus_sm8650/oneplus/sm8650_v_15.0.0_oneplus_ace5/vendor/oplus/kernel/cpu/sched_ext/oplus_local_modules.bzl
+
+          # 返回到 kernel_platform 目录并生成补丁
+          cd ../..
+          git add common/kernel/cpu/sched_ext/*
+          git diff --cached > sched_ext.patch
+
+          # 移动补丁到工作目录根部
+          mv sched_ext.patch ../../
+
+      - name: Upload patch artifact
+        uses: actions/upload-artifact@main
+        with:
+          name: "sched_ext_patch-${{ steps.map_manifest.outputs.mapped_manifest }}"
+          path: kernel_workspace/sched_ext.patch
+          compression-level: 9
