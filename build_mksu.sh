@@ -43,6 +43,10 @@ rm -f "$KERNEL_WORKSPACE/common/android/abi_gki_protected_exports_*" || echo "No
 rm -f "$KERNEL_WORKSPACE/msm-kernel/android/abi_gki_protected_exports_*" || echo "No protected exports!"
 sed -i 's/ -dirty//g' "$KERNEL_WORKSPACE/build/kernel/kleaf/workspace_status_stamp.py"
 
+# 检查完整目录结构
+cd "$KERNEL_WORKSPACE" || exit 1
+find . -type d > "$OLD_DIR/kernel_directory_structure.txt"
+
 # 设置 KernelSU
 cd "$KERNEL_WORKSPACE" || exit 1
 curl -LSs "https://raw.githubusercontent.com/5ec1cff/KernelSU/refs/heads/main/kernel/setup.sh" | bash -
