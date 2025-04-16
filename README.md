@@ -1,3 +1,7 @@
+# 公告
+AnyKernel3.zip需自行解包并重新压缩刷入
+（懒得改）
+
 # 说明
 OnePlus Kernel 6.1 GKI
 
