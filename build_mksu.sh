@@ -83,7 +83,12 @@ curl -o 002-zstd.patch https://raw.githubusercontent.com/ferstar/kernel_manifest
 patch -p1 < 002-zstd.patch || true
 
 cd "$KERNEL_WORKSPACE" || exit 1
-rm common/android/abi_gki_protected_exports_*         
+rm common/android/abi_gki_protected_exports_*     
+
+echo "CONFIG_TMPFS_XATTR=y" >> "$KERNEL_WORKSPACE/common/arch/arm64/configs/gki_defconfig"
+echo "CONFIG_TMPFS_POSIX_ACL=y" >> "$KERNEL_WORKSPACE/common/arch/arm64/configs/gki_defconfig"
+
+sed -i 's/check_defconfig//' "$KERNEL_WORKSPACE/common/build.config.gki"
 
 export OPLUS_FEATURES="OPLUS_FEATURE_BSP_DRV_INJECT_TEST=1"
 # 构建内核
