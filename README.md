@@ -2,12 +2,14 @@
 AnyKernel3.zip需自行解包并重新压缩刷入
 （懒得改）
 
+更新 mksu12115
+
 # 说明
 OnePlus Kernel 6.1 GKI
 
 基于 Ace5 一加官方内核源码构建
 
-包含 MKSU 12108 + SuSFS 1.5.5
+包含 MKSU + SuSFS 1.5.5
 
 Full LTO + Polly 和 O3 优化
 
